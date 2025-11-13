@@ -3,17 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>حاسبة اللوت</title>
+  <title>Busultan Trading Lot Engine</title>
   <style>
     :root {
-      --bg-main: #050714;
-      --card-bg: rgba(12, 16, 35, 0.92);
+      --bg-main: #050712;
+      --bg-main-light: #f4f6fb;
+      --card-bg: rgba(11, 14, 32, 0.96);
+      --card-bg-light: #ffffff;
       --accent: #00e0ff;
-      --accent-soft: rgba(0, 224, 255, 0.15);
       --accent-2: #ff6b3d;
+      --accent-soft: rgba(0, 224, 255, 0.14);
       --text-main: #f5f6ff;
+      --text-main-light: #101321;
       --text-muted: #a7afc7;
-      --border-soft: rgba(118, 132, 190, 0.35);
+      --text-muted-light: #66708e;
+      --border-soft: rgba(119, 135, 210, 0.4);
+      --border-soft-light: #dde2f3;
+      --shadow-strong: 0 18px 40px rgba(3, 6, 20, 0.92);
+      --shadow-strong-light: 0 16px 36px rgba(35, 46, 90, 0.18);
       --error-bg: rgba(255, 71, 87, 0.12);
       --error-text: #ff4b5c;
     }
@@ -27,12 +34,18 @@
       padding: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         sans-serif;
-      background: radial-gradient(circle at top, #171b3c 0, #050714 48%, #000 100%);
-      color: var(--text-main);
       min-height: 100vh;
       display: flex;
       align-items: stretch;
       justify-content: center;
+      background: radial-gradient(circle at top, #191f40 0, #050712 50%, #000 100%);
+      color: var(--text-main);
+      transition: background 0.35s ease, color 0.35s ease;
+    }
+
+    body.light {
+      background: radial-gradient(circle at top, #fefeff 0, #e7ebff 40%, #cfd5f2 100%);
+      color: var(--text-main-light);
     }
 
     .background-fx {
@@ -66,14 +79,14 @@
 
     .bg-wave {
       position: absolute;
-      inset: 40% -40% auto -40%;
+      inset: 38% -40% auto -40%;
       height: 120px;
       background: linear-gradient(
         90deg,
         rgba(0, 224, 255, 0.05) 0%,
-        rgba(0, 224, 255, 0.5) 35%,
-        rgba(255, 107, 61, 0.5) 65%,
-        rgba(255, 107, 61, 0.08) 100%
+        rgba(0, 224, 255, 0.7) 35%,
+        rgba(255, 107, 61, 0.7) 65%,
+        rgba(255, 107, 61, 0.12) 100%
       );
       mix-blend-mode: screen;
       opacity: 0.55;
@@ -81,71 +94,189 @@
       filter: blur(1.2px);
     }
 
+    body.light .bg-wave {
+      opacity: 0.22;
+      filter: blur(2px);
+    }
+
     .app-wrapper {
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 540px;
+      max-width: 620px;
       padding: 18px 14px 26px;
     }
 
     .card {
       position: relative;
       width: 100%;
-      padding: 18px 18px 22px;
-      border-radius: 22px;
+      padding: 16px 18px 20px;
+      border-radius: 24px;
       background: var(--card-bg);
       border: 1px solid var(--border-soft);
-      box-shadow:
-        0 18px 40px rgba(3, 6, 20, 0.95),
-        0 0 0 1px rgba(255, 255, 255, 0.02);
+      box-shadow: var(--shadow-strong);
       backdrop-filter: blur(22px);
+      transition: background 0.35s ease, border-color 0.35s ease,
+        box-shadow 0.35s ease;
+    }
+
+    body.light .card {
+      background: var(--card-bg-light);
+      border-color: var(--border-soft-light);
+      box-shadow: var(--shadow-strong-light);
     }
 
     .header {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
       gap: 14px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
-    .title-block {
-      flex: 1;
+    .logo-block {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: radial-gradient(circle at 10% 0, #00e0ff 0, #050b1f 40%, #ff6b3d 100%);
+      position: relative;
+      box-shadow:
+        0 0 18px rgba(0, 224, 255, 0.6),
+        0 0 26px rgba(255, 107, 61, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .logo-mark::before {
+      content: "";
+      position: absolute;
+      width: 70%;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, #fff, transparent);
+      top: 12px;
+      opacity: 0.7;
+    }
+
+    .logo-text-main {
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      font-size: 16px;
+    }
+
+    .logo-text-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    body.light .logo-text-sub {
+      color: var(--text-muted-light);
+    }
+
+    .logo-letter {
+      font-weight: 900;
+      font-size: 22px;
+      color: #ffffff;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(121, 138, 210, 0.7);
+      background: radial-gradient(circle at top, #151a37 0, #060918 70%);
+      color: var(--text-muted);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    body.light .theme-toggle {
+      background: #f4f6ff;
+      border-color: #cdd4f0;
+      color: var(--text-muted-light);
+    }
+
+    .theme-toggle span.icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 0, #ffe066 0, #ff8a3d 45%, #c23dff 100%);
+      box-shadow: 0 0 10px rgba(255, 193, 7, 0.7);
+    }
+
+    body.light .theme-toggle span.icon {
+      background: radial-gradient(circle at 50% 50%, #1a2340 0, #344161 100%);
+      box-shadow: 0 0 7px rgba(40, 52, 90, 0.8);
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      margin-bottom: 6px;
+      font-size: 10px;
     }
 
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       padding: 3px 9px;
       border-radius: 999px;
-      background: rgba(0, 224, 255, 0.12);
-      border: 1px solid rgba(0, 224, 255, 0.4);
-      font-size: 11px;
+      border: 1px solid rgba(0, 224, 255, 0.45);
+      background: rgba(0, 224, 255, 0.1);
+      color: var(--accent);
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: var(--accent);
-      margin-bottom: 6px;
     }
 
     .badge-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: radial-gradient(circle, #00e0ff 0, transparent 65%);
+      background: radial-gradient(circle, #00e0ff 0, transparent 60%);
       box-shadow: 0 0 12px rgba(0, 224, 255, 0.9);
     }
 
+    .badge.secondary {
+      border-color: rgba(255, 255, 255, 0.22);
+      background: rgba(15, 21, 48, 0.9);
+      color: var(--text-muted);
+    }
+
+    body.light .badge.secondary {
+      background: #f0f3ff;
+      color: var(--text-muted-light);
+      border-color: #d1d7f1;
+    }
+
     h1 {
-      font-size: 20px;
-      margin: 0 0 3px;
+      font-size: 19px;
+      margin: 3px 0 2px;
     }
 
     .subtitle {
       margin: 0;
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
+    }
+
+    body.light .subtitle {
+      color: var(--text-muted-light);
     }
 
     .candles-strip {
@@ -154,10 +285,16 @@
       gap: 4px;
       padding: 6px 10px 4px;
       border-radius: 14px;
-      background: radial-gradient(circle at top, #202547 0, #090b1f 65%);
-      border: 1px solid rgba(128, 143, 210, 0.5);
+      background: radial-gradient(circle at top, #202547 0, #090b1f 60%);
+      border: 1px solid rgba(128, 143, 210, 0.6);
       box-shadow: 0 0 24px rgba(9, 193, 255, 0.18);
       min-width: 120px;
+    }
+
+    body.light .candles-strip {
+      background: radial-gradient(circle at top, #e4e7ff 0, #cdd3ff 60%);
+      border-color: #b8c1f3;
+      box-shadow: 0 0 18px rgba(104, 120, 209, 0.35);
     }
 
     .candle {
@@ -175,7 +312,7 @@
       background: linear-gradient(
         to top,
         rgba(255, 107, 61, 0.18),
-        rgba(255, 107, 61, 0.95)
+        rgba(255, 107, 61, 0.96)
       );
     }
 
@@ -197,34 +334,24 @@
       opacity: 0.85;
     }
 
-    .candle:nth-child(1) {
-      height: 24px;
-    }
-
-    .candle:nth-child(2) {
-      height: 34px;
-    }
-
-    .candle:nth-child(3) {
-      height: 18px;
-    }
-
-    .candle:nth-child(4) {
-      height: 29px;
-    }
-
-    .candle:nth-child(5) {
-      height: 22px;
-    }
+    .candle:nth-child(1) { height: 24px; }
+    .candle:nth-child(2) { height: 34px; }
+    .candle:nth-child(3) { height: 18px; }
+    .candle:nth-child(4) { height: 29px; }
+    .candle:nth-child(5) { height: 22px; }
 
     .section-title {
-      margin: 12px 0 8px;
-      font-size: 13px;
+      margin: 10px 0 6px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--text-muted);
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    body.light .section-title {
+      color: var(--text-muted-light);
     }
 
     .section-title::before {
@@ -237,129 +364,243 @@
 
     label {
       display: block;
-      margin-top: 9px;
+      margin-top: 7px;
       margin-bottom: 3px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 500;
       color: var(--text-muted);
     }
 
+    body.light label {
+      color: var(--text-muted-light);
+    }
+
+    .row-2 {
+      display: flex;
+      gap: 8px;
+    }
+
+    .row-2 > div {
+      flex: 1;
+    }
+
     .input-wrapper {
       position: relative;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     input,
     select {
       width: 100%;
-      padding: 9px 11px;
+      padding: 8px 10px;
       border-radius: 11px;
       border: 1px solid var(--border-soft);
-      background: rgba(6, 9, 26, 0.9);
+      background: rgba(4, 7, 23, 0.92);
       color: var(--text-main);
-      font-size: 13px;
+      font-size: 12px;
       outline: none;
       -webkit-appearance: none;
       appearance: none;
+      transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
     }
 
     input::placeholder {
-      color: #596081;
+      color: #60678d;
+    }
+
+    body.light input,
+    body.light select {
+      background: #f6f7ff;
+      border-color: var(--border-soft-light);
+      color: var(--text-main-light);
+    }
+
+    body.light input::placeholder {
+      color: #99a3c2;
     }
 
     select {
-      padding-right: 32px;
+      padding-right: 30px;
     }
 
     .select-arrow {
       position: absolute;
       top: 50%;
-      inset-inline-end: 11px;
+      inset-inline-end: 9px;
       transform: translateY(-50%);
       pointer-events: none;
-      font-size: 12px;
+      font-size: 11px;
       color: #8089b0;
     }
 
-    button {
-      margin-top: 12px;
-      padding: 11px;
+    body.light .select-arrow {
+      color: #707aa6;
+    }
+
+    button.primary {
+      margin-top: 10px;
+      padding: 9px;
       width: 100%;
       border-radius: 999px;
       border: none;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
       background: linear-gradient(135deg, #00e0ff, #ff6b3d);
-      color: #050714;
+      color: #050712;
       box-shadow:
         0 10px 26px rgba(0, 224, 255, 0.25),
-        0 0 0 1px rgba(0, 0, 0, 0.3);
+        0 0 0 1px rgba(0, 0, 0, 0.35);
     }
 
-    button:active {
+    button.primary:active {
       transform: translateY(1px);
       box-shadow:
-        0 3px 10px rgba(0, 224, 255, 0.25),
-        0 0 0 1px rgba(0, 0, 0, 0.3);
+        0 3px 10px rgba(0, 224, 255, 0.2),
+        0 0 0 1px rgba(0, 0, 0, 0.35);
+    }
+
+    button.secondary {
+      margin-top: 7px;
+      padding: 7px;
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid rgba(121, 138, 210, 0.7);
+      background: rgba(9, 13, 33, 0.96);
+      color: var(--text-muted);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    body.light button.secondary {
+      background: #eef1ff;
+      border-color: #cdd5ff;
+      color: var(--text-muted-light);
     }
 
     .result {
-      margin-top: 15px;
-      padding: 10px 11px;
+      margin-top: 12px;
+      padding: 9px 10px;
       border-radius: 14px;
       background: radial-gradient(circle at top left, #18213f 0, #080b1d 55%);
       border: 1px solid rgba(117, 132, 197, 0.65);
-      font-size: 13px;
+      font-size: 12px;
       line-height: 1.7;
       color: var(--text-main);
     }
 
-    .result b {
-      color: #fefefe;
+    body.light .result {
+      background: #f5f6ff;
+      border-color: #c5cdf5;
+      color: var(--text-main-light);
     }
+
+    .result b { color: #ffffff; }
+    body.light .result b { color: #151728; }
 
     .result.error {
       background: var(--error-bg);
-      border-color: rgba(255, 75, 92, 0.6);
+      border-color: rgba(255, 75, 92, 0.7);
       color: var(--error-text);
     }
 
     .note {
-      margin-top: 9px;
-      font-size: 11px;
+      margin-top: 7px;
+      font-size: 10px;
       color: var(--text-muted);
       line-height: 1.6;
+    }
+
+    body.light .note {
+      color: var(--text-muted-light);
     }
 
     .pill-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 6px;
+      gap: 5px;
+      margin-top: 5px;
       margin-bottom: 0;
     }
 
     .pill {
-      padding: 3px 8px;
+      padding: 2px 7px;
       border-radius: 999px;
       border: 1px solid rgba(120, 135, 210, 0.5);
-      font-size: 10px;
+      font-size: 9px;
       color: var(--text-muted);
-      background: rgba(7, 12, 34, 0.9);
+      background: rgba(7, 12, 34, 0.94);
     }
 
-    @media (max-width: 420px) {
+    body.light .pill {
+      background: #edf0ff;
+      border-color: #cbd4ff;
+      color: var(--text-muted-light);
+    }
+
+    .history-card {
+      margin-top: 12px;
+      padding: 9px 10px;
+      border-radius: 16px;
+      background: rgba(6, 9, 24, 0.94);
+      border: 1px solid rgba(108, 123, 196, 0.7);
+      font-size: 11px;
+      max-height: 210px;
+      overflow: auto;
+    }
+
+    body.light .history-card {
+      background: #f7f8ff;
+      border-color: #c9d1f4;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10px;
+    }
+
+    th,
+    td {
+      padding: 4px 3px;
+      border-bottom: 1px solid rgba(80, 94, 160, 0.5);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    body.light th,
+    body.light td {
+      border-bottom-color: #d5dcfb;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: rgba(8, 11, 29, 0.96);
+      z-index: 1;
+    }
+
+    body.light th {
+      background: #edf0ff;
+    }
+
+    .no-trades {
+      text-align: center;
+      padding: 5px 0;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 480px) {
       .card {
         padding-inline: 14px;
       }
       .header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
+        gap: 10px;
       }
       .candles-strip {
-        align-self: stretch;
-        justify-content: center;
+        align-self: flex-end;
       }
     }
   </style>
@@ -374,112 +615,267 @@
   <div class="app-wrapper">
     <div class="card">
       <div class="header">
-        <div class="title-block">
-          <div class="badge">
-            <span class="badge-dot"></span>
-            LOT ENGINE v1.0
+        <div>
+          <div class="logo-block">
+            <div class="logo-mark">
+              <span class="logo-letter">B</span>
+            </div>
+            <div>
+              <div class="logo-text-main">Busultan Trading</div>
+              <div class="logo-text-sub">PRO RISK ENGINE</div>
+            </div>
           </div>
-          <h1>حاسبة اللوت</h1>
+          <div class="badge-row">
+            <div class="badge">
+              <span class="badge-dot"></span>
+              LOT ENGINE v2.0
+            </div>
+            <div class="badge secondary">
+              Multi-Asset • Funding • R:R
+            </div>
+          </div>
+          <h1>حاسبة اللوت المتقدمة</h1>
           <p class="subtitle">
-            إدارة مخاطر لجميع الأدوات (فوركس، ين، ذهب، نفط، مؤشرات) مع مخرجات جاهزة للتنفيذ.
+            إدارة مخاطرة احترافية: فوركس، ذهب، نفط، مؤشرات، وحسابات تمويل مع حفظ الصفقات.
           </p>
         </div>
-        <div class="candles-strip" aria-hidden="true">
-          <div class="candle"></div>
-          <div class="candle red"></div>
-          <div class="candle"></div>
-          <div class="candle red"></div>
-          <div class="candle"></div>
-        </div>
+        <button class="theme-toggle" id="themeToggle" type="button">
+          <span class="icon"></span>
+          <span id="themeLabel">وضع ليلي</span>
+        </button>
       </div>
 
       <div class="section-title">مدخلات الحساب</div>
 
-      <label>رصيد الحساب (عملة الحساب – مثال: USD):</label>
-      <div class="input-wrapper">
-        <input type="number" id="balance" placeholder="مثال: 10000" />
+      <div class="row-2">
+        <div>
+          <label>رصيد الحساب (USD):</label>
+          <div class="input-wrapper">
+            <input type="number" id="balance" placeholder="مثال: 10000" />
+          </div>
+        </div>
+        <div>
+          <label>نسبة المخاطرة % من الحساب:</label>
+          <div class="input-wrapper">
+            <input type="number" id="riskPercent" placeholder="مثال: 1" />
+          </div>
+        </div>
       </div>
 
-      <label>نسبة المخاطرة % من الحساب:</label>
-      <div class="input-wrapper">
-        <input type="number" id="riskPercent" placeholder="مثال: 1" />
+      <div class="row-2">
+        <div>
+          <label>سعر الدخول (Entry):</label>
+          <div class="input-wrapper">
+            <input
+              type="number"
+              id="entryPrice"
+              step="0.00001"
+              placeholder="مثال: 1.08500 أو 2350.0 للذهب"
+            />
+          </div>
+        </div>
+        <div>
+          <label>سعر وقف الخسارة (SL):</label>
+          <div class="input-wrapper">
+            <input
+              type="number"
+              id="slPrice"
+              step="0.00001"
+              placeholder="مثال: 1.08300"
+            />
+          </div>
+        </div>
       </div>
 
-      <label>سعر الدخول (Entry Price):</label>
-      <div class="input-wrapper">
-        <input
-          type="number"
-          id="entryPrice"
-          step="0.00001"
-          placeholder="مثال: 1.08500 أو 2350.0 للذهب"
-        />
+      <div class="row-2">
+        <div>
+          <label>هدف 1 (TP1):</label>
+          <div class="input-wrapper">
+            <input
+              type="number"
+              id="tp1"
+              step="0.00001"
+              placeholder="اختياري"
+            />
+          </div>
+        </div>
+        <div>
+          <label>هدف 2 (TP2):</label>
+          <div class="input-wrapper">
+            <input
+              type="number"
+              id="tp2"
+              step="0.00001"
+              placeholder="اختياري"
+            />
+          </div>
+        </div>
       </div>
 
-      <label>سعر وقف الخسارة (Stop Loss Price):</label>
-      <div class="input-wrapper">
-        <input
-          type="number"
-          id="slPrice"
-          step="0.00001"
-          placeholder="مثال: 1.08300"
-        />
+      <div class="row-2">
+        <div>
+          <label>الرافعة المالية (Leverage):</label>
+          <div class="input-wrapper">
+            <input type="number" id="leverage" placeholder="مثال: 100 أو 500" />
+          </div>
+        </div>
+        <div>
+          <label>نوع الأداة:</label>
+          <div class="input-wrapper">
+            <select id="instrumentType">
+              <option value="FOREX_4">فوركس 4 منازل (EURUSD, GBPUSD, ...)</option>
+              <option value="FOREX_JPY">أزواج الين (USDJPY, EURJPY, ...)</option>
+              <option value="GOLD">ذهب XAUUSD</option>
+              <option value="SILVER">فضة XAGUSD</option>
+              <option value="OIL">نفط (USOIL / UKOIL)</option>
+              <option value="INDEX">مؤشرات (US30, US500, NAS100, GER40, ...)</option>
+            </select>
+            <span class="select-arrow">▼</span>
+          </div>
+        </div>
       </div>
 
-      <label>الرافعة المالية (Leverage):</label>
-      <div class="input-wrapper">
-        <input type="number" id="leverage" placeholder="مثال: 100 أو 500" />
+      <div class="section-title">حسابات التمويل (Prop)</div>
+
+      <div class="row-2">
+        <div>
+          <label>خطة التمويل:</label>
+          <div class="input-wrapper">
+            <select id="fundingPlan">
+              <option value="none">لا يوجد</option>
+              <option value="50k">50K</option>
+              <option value="100k">100K</option>
+              <option value="200k">200K</option>
+              <option value="custom">مخصص</option>
+            </select>
+            <span class="select-arrow">▼</span>
+          </div>
+        </div>
+        <div>
+          <label>حجم الحساب الممول (إن وجد):</label>
+          <div class="input-wrapper">
+            <input
+              type="number"
+              id="fundingSize"
+              placeholder="مثال: 100000"
+            />
+          </div>
+        </div>
       </div>
 
-      <label>نوع الأداة:</label>
-      <div class="input-wrapper">
-        <select id="instrumentType">
-          <option value="FOREX_4">فوركس 4 منازل (EURUSD, GBPUSD, ...)</option>
-          <option value="FOREX_JPY">أزواج الين (USDJPY, EURJPY, ...)</option>
-          <option value="GOLD">ذهب XAUUSD</option>
-          <option value="SILVER">فضة XAGUSD</option>
-          <option value="OIL">نفط (USOIL / UKOIL)</option>
-          <option value="INDEX">مؤشرات (US30, US500, NAS100, GER40, ...)</option>
-        </select>
-        <span class="select-arrow">▼</span>
+      <div class="row-2">
+        <div>
+          <label>حد الخسارة اليومي %:</label>
+          <div class="input-wrapper">
+            <input
+              type="number"
+              id="dailyLossPct"
+              placeholder="مثال شائع: 5"
+            />
+          </div>
+        </div>
+        <div>
+          <label>حد الخسارة الكلي %:</label>
+          <div class="input-wrapper">
+            <input
+              type="number"
+              id="totalLossPct"
+              placeholder="مثال شائع: 10"
+            />
+          </div>
+        </div>
       </div>
 
-      <button onclick="calculateLot()">احسب حجم اللوت</button>
+      <button class="primary" type="button" onclick="calculateLot()">
+        احسب حجم اللوت
+      </button>
+
+      <button class="secondary" type="button" onclick="saveTrade()">
+        حفظ الصفقة في سجل Busultan
+      </button>
 
       <div class="result" id="resultBox" style="display: none"></div>
 
       <div class="note">
-        • الحسابات تقريبية وتفترض أن عملة الحساب = عملة التسعير (مثال: حساب بالدولار وأدوات
-        مسعّرة بالدولار).<br />
-        • ضروري وجود فرق فعلي بين سعر الدخول ووقف الخسارة لحساب عدد النقاط وحجم اللوت.<br />
-        • تحقق من مواصفات العقود الفعلية لدى الوسيط (المؤشرات والسلع قد تختلف من بروكر لآخر).
+        • الحسابات تقريبية وتفترض أن عملة الحساب = عملة التسعير (حساب بالدولار وأدوات مسعّرة بالدولار).<br />
+        • استخدم أرقام التمويل وحدود الخسارة حسب شروط الشركة التي تتعامل معها.<br />
+        • سجل الصفقات يتم تخزينه محليًا في جهازك (لا يرفع لأي سيرفر).
         <div class="pill-row">
           <div class="pill">Risk-based sizing</div>
-          <div class="pill">Multi-asset</div>
-          <div class="pill">Lot • Pip • Margin</div>
+          <div class="pill">Multi-Asset</div>
+          <div class="pill">Funding Accounts</div>
+          <div class="pill">R:R • TP1/TP2</div>
         </div>
+      </div>
+
+      <div class="section-title">سجل الصفقات (محفوظ في جهازك)</div>
+      <div class="history-card">
+        <table>
+          <thead>
+            <tr>
+              <th>التاريخ</th>
+              <th>أداة</th>
+              <th>اتجاه</th>
+              <th>لوت</th>
+              <th>SL (نقطة)</th>
+              <th>R:R1</th>
+              <th>حساب</th>
+            </tr>
+          </thead>
+          <tbody id="tradesBody">
+            <tr><td colspan="7" class="no-trades">لا توجد صفقات محفوظة بعد</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
 
   <script>
+    let lastResult = null;
+
     function getInstrumentParams(type) {
       switch (type) {
         case "FOREX_4":
-          return { contractSize: 100000, pipSize: 0.0001 };
+          return { contractSize: 100000, pipSize: 0.0001, label: "FX-4" };
         case "FOREX_JPY":
-          return { contractSize: 100000, pipSize: 0.01 };
+          return { contractSize: 100000, pipSize: 0.01, label: "FX-JPY" };
         case "GOLD":
-          return { contractSize: 100, pipSize: 0.1 };
+          return { contractSize: 100, pipSize: 0.1, label: "XAUUSD" };
         case "SILVER":
-          return { contractSize: 5000, pipSize: 0.01 };
+          return { contractSize: 5000, pipSize: 0.01, label: "XAGUSD" };
         case "OIL":
-          return { contractSize: 1000, pipSize: 0.01 };
+          return { contractSize: 1000, pipSize: 0.01, label: "OIL" };
         case "INDEX":
-          return { contractSize: 1, pipSize: 1 };
+          return { contractSize: 1, pipSize: 1, label: "INDEX" };
         default:
-          return { contractSize: 100000, pipSize: 0.0001 };
+          return { contractSize: 100000, pipSize: 0.0001, label: "FX" };
       }
     }
+
+    function applyFundingPreset() {
+      const plan = document.getElementById("fundingPlan").value;
+      const fundingSize = document.getElementById("fundingSize");
+      const dailyLossPct = document.getElementById("dailyLossPct");
+      const totalLossPct = document.getElementById("totalLossPct");
+
+      if (plan === "50k") {
+        fundingSize.value = 50000;
+        dailyLossPct.value = 5;
+        totalLossPct.value = 10;
+      } else if (plan === "100k") {
+        fundingSize.value = 100000;
+        dailyLossPct.value = 5;
+        totalLossPct.value = 10;
+      } else if (plan === "200k") {
+        fundingSize.value = 200000;
+        dailyLossPct.value = 5;
+        totalLossPct.value = 10;
+      }
+    }
+
+    document
+      .getElementById("fundingPlan")
+      .addEventListener("change", applyFundingPreset);
 
     function formatNumber(num, decimals) {
       return Number(num).toFixed(decimals);
@@ -494,9 +890,21 @@
         document.getElementById("entryPrice").value
       );
       const slPrice = parseFloat(document.getElementById("slPrice").value);
+      const tp1 = parseFloat(document.getElementById("tp1").value);
+      const tp2 = parseFloat(document.getElementById("tp2").value);
       const leverage = parseFloat(document.getElementById("leverage").value);
       const instrumentType =
         document.getElementById("instrumentType").value;
+
+      const fundingSize = parseFloat(
+        document.getElementById("fundingSize").value
+      );
+      const dailyLossPct = parseFloat(
+        document.getElementById("dailyLossPct").value
+      );
+      const totalLossPct = parseFloat(
+        document.getElementById("totalLossPct").value
+      );
 
       const resultBox = document.getElementById("resultBox");
 
@@ -510,7 +918,7 @@
         resultBox.style.display = "block";
         resultBox.classList.add("error");
         resultBox.innerHTML =
-          "رجاءً تأكد من تعبئة جميع الحقول الأساسية بشكل صحيح.";
+          "رجاءً تأكد من تعبئة رصيد الحساب، نسبة المخاطرة، سعر الدخول، وقف الخسارة، والرافعة.";
         return;
       }
 
@@ -535,12 +943,63 @@
       const positionNotional = contractSize * lotSize * entryPrice;
       const marginRequired = positionNotional / leverage;
 
+      let rr1 = null;
+      let rr2 = null;
+      let direction = entryPrice < slPrice ? "بيع" : "شراء";
+
+      if (!isNaN(tp1)) {
+        const profitPips1 = Math.abs(tp1 - entryPrice) / pipSize;
+        rr1 = profitPips1 / stopLossPips;
+      }
+      if (!isNaN(tp2)) {
+        const profitPips2 = Math.abs(tp2 - entryPrice) / pipSize;
+        rr2 = profitPips2 / stopLossPips;
+      }
+
+      let fundingText = "";
+      if (!isNaN(fundingSize) && !isNaN(dailyLossPct) && !isNaN(totalLossPct)) {
+        const dailyLimit = (fundingSize * dailyLossPct) / 100;
+        const totalLimit = (fundingSize * totalLossPct) / 100;
+        const dailyUsage = (riskAmount / dailyLimit) * 100;
+        const totalUsage = (riskAmount / totalLimit) * 100;
+
+        fundingText =
+          "<br><br><b>تحليل حساب التمويل:</b><br>" +
+          "حد الخسارة اليومي: " +
+          formatNumber(dailyLimit, 2) +
+          " (" +
+          dailyLossPct +
+          "%) — تستخدم منها تقريباً " +
+          formatNumber(dailyUsage, 1) +
+          "% بهذه الصفقة.<br>" +
+          "حد الخسارة الكلي: " +
+          formatNumber(totalLimit, 2) +
+          " (" +
+          totalLossPct +
+          "%) — تستخدم منها تقريباً " +
+          formatNumber(totalUsage, 1) +
+          "%.";
+      }
+
+      let rrText = "";
+      if (rr1 || rr2) {
+        rrText += "<br><br><b>تحليل R:R للأهداف:</b><br>";
+        if (rr1) {
+          rrText += "الهدف 1 (TP1): R:R ≈ " + formatNumber(rr1, 2) + "<br>";
+        }
+        if (rr2) {
+          rrText += "الهدف 2 (TP2): R:R ≈ " + formatNumber(rr2, 2) + "<br>";
+        }
+      }
+
       resultBox.style.display = "block";
       resultBox.classList.remove("error");
       resultBox.innerHTML =
         "حجم اللوت المقترح: <b>" +
         formatNumber(lotSize, 3) +
-        " لوت</b><br>" +
+        " لوت</b> (" +
+        direction +
+        ")<br>" +
         "عدد نقاط وقف الخسارة: <b>" +
         formatNumber(stopLossPips, 1) +
         " نقطة</b><br>" +
@@ -552,8 +1011,130 @@
         "</b> لكل نقطة<br>" +
         "الهامش المطلوب تقريبياً: <b>" +
         formatNumber(marginRequired, 2) +
-        "</b>";
+        "</b>" +
+        rrText +
+        fundingText;
+
+      lastResult = {
+        timestamp: new Date().toISOString(),
+        instrumentLabel: params.label,
+        direction,
+        lotSize,
+        stopLossPips,
+        rr1,
+        balance,
+        riskPercent
+      };
+
+      renderTrades(); // تحديث الجدول لو تم الحفظ سابقًا
     }
+
+    function saveTrade() {
+      const resultBox = document.getElementById("resultBox");
+      if (!lastResult) {
+        resultBox.style.display = "block";
+        resultBox.classList.add("error");
+        resultBox.innerHTML =
+          "احسب الصفقة أولاً قبل محاولة حفظها.";
+        return;
+      }
+
+      let trades = [];
+      try {
+        const stored = localStorage.getItem("busultan_trades");
+        if (stored) {
+          trades = JSON.parse(stored);
+        }
+      } catch (e) {
+        trades = [];
+      }
+
+      trades.unshift(lastResult); // آخر صفقة في الأعلى
+      if (trades.length > 50) trades.pop();
+
+      localStorage.setItem("busultan_trades", JSON.stringify(trades));
+
+      resultBox.style.display = "block";
+      resultBox.classList.remove("error");
+      resultBox.innerHTML =
+        "تم حفظ الصفقة في سجل Busultan المحلي. يمكنك مراجعتها في جدول الصفقات بالأسفل.";
+
+      renderTrades();
+    }
+
+    function renderTrades() {
+      const tbody = document.getElementById("tradesBody");
+      let trades = [];
+      try {
+        const stored = localStorage.getItem("busultan_trades");
+        if (stored) {
+          trades = JSON.parse(stored);
+        }
+      } catch (e) {
+        trades = [];
+      }
+
+      if (!trades.length) {
+        tbody.innerHTML =
+          '<tr><td colspan="7" class="no-trades">لا توجد صفقات محفوظة بعد</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = "";
+      trades.forEach((t) => {
+        const tr = document.createElement("tr");
+        const date = new Date(t.timestamp);
+        const dateStr =
+          date.toLocaleDateString("en-GB") +
+          " " +
+          date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+
+        tr.innerHTML =
+          "<td>" +
+          dateStr +
+          "</td>" +
+          "<td>" +
+          (t.instrumentLabel || "") +
+          "</td>" +
+          "<td>" +
+          (t.direction || "") +
+          "</td>" +
+          "<td>" +
+          (t.lotSize ? formatNumber(t.lotSize, 3) : "") +
+          "</td>" +
+          "<td>" +
+          (t.stopLossPips ? formatNumber(t.stopLossPips, 1) : "") +
+          "</td>" +
+          "<td>" +
+          (t.rr1 ? "≈" + formatNumber(t.rr1, 2) : "-") +
+          "</td>" +
+          "<td>" +
+          (t.balance ? formatNumber(t.balance, 0) + " / " + t.riskPercent + "%" : "") +
+          "</td>";
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem("busultan_theme");
+      if (saved === "light") {
+        document.body.classList.add("light");
+        document.getElementById("themeLabel").textContent = "وضع نهاري";
+      }
+    }
+
+    document.getElementById("themeToggle").addEventListener("click", () => {
+      document.body.classList.toggle("light");
+      const isLight = document.body.classList.contains("light");
+      document.getElementById("themeLabel").textContent = isLight
+        ? "وضع نهاري"
+        : "وضع ليلي";
+      localStorage.setItem("busultan_theme", isLight ? "light" : "dark");
+    });
+
+    initTheme();
+    renderTrades();
   </script>
 </body>
 </html>
