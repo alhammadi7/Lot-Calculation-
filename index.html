@@ -1,157 +1,480 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>حاسبة اللوت وإدارة المخاطر</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>حاسبة اللوت</title>
   <style>
+    :root {
+      --bg-main: #050714;
+      --card-bg: rgba(12, 16, 35, 0.92);
+      --accent: #00e0ff;
+      --accent-soft: rgba(0, 224, 255, 0.15);
+      --accent-2: #ff6b3d;
+      --text-main: #f5f6ff;
+      --text-muted: #a7afc7;
+      --border-soft: rgba(118, 132, 190, 0.35);
+      --error-bg: rgba(255, 71, 87, 0.12);
+      --error-text: #ff4b5c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
       padding: 0;
-      background: #f4f4f4;
-      direction: rtl;
-    }
-    .app {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 16px;
-      background: #ffffff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #171b3c 0, #050714 48%, #000 100%);
+      color: var(--text-main);
       min-height: 100vh;
-      box-sizing: border-box;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
     }
+
+    .background-fx {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-ring {
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 224, 255, 0.18);
+      box-shadow: 0 0 45px rgba(0, 224, 255, 0.12);
+      top: -140px;
+      left: -120px;
+      filter: blur(0.3px);
+    }
+
+    .bg-ring:nth-child(2) {
+      top: auto;
+      bottom: -180px;
+      right: -160px;
+      left: auto;
+      border-color: rgba(255, 107, 61, 0.2);
+      box-shadow: 0 0 60px rgba(255, 107, 61, 0.18);
+    }
+
+    .bg-wave {
+      position: absolute;
+      inset: 40% -40% auto -40%;
+      height: 120px;
+      background: linear-gradient(
+        90deg,
+        rgba(0, 224, 255, 0.05) 0%,
+        rgba(0, 224, 255, 0.5) 35%,
+        rgba(255, 107, 61, 0.5) 65%,
+        rgba(255, 107, 61, 0.08) 100%
+      );
+      mix-blend-mode: screen;
+      opacity: 0.55;
+      transform: skewY(-7deg);
+      filter: blur(1.2px);
+    }
+
+    .app-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 540px;
+      padding: 18px 14px 26px;
+    }
+
+    .card {
+      position: relative;
+      width: 100%;
+      padding: 18px 18px 22px;
+      border-radius: 22px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-soft);
+      box-shadow:
+        0 18px 40px rgba(3, 6, 20, 0.95),
+        0 0 0 1px rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(22px);
+    }
+
+    .header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .title-block {
+      flex: 1;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(0, 224, 255, 0.12);
+      border: 1px solid rgba(0, 224, 255, 0.4);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #00e0ff 0, transparent 65%);
+      box-shadow: 0 0 12px rgba(0, 224, 255, 0.9);
+    }
+
     h1 {
       font-size: 20px;
-      margin-bottom: 4px;
-      text-align: center;
+      margin: 0 0 3px;
     }
-    h2 {
-      font-size: 14px;
-      margin-top: 0;
-      margin-bottom: 16px;
-      text-align: center;
-      color: #555;
+
+    .subtitle {
+      margin: 0;
+      font-size: 12px;
+      color: var(--text-muted);
     }
+
+    .candles-strip {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      padding: 6px 10px 4px;
+      border-radius: 14px;
+      background: radial-gradient(circle at top, #202547 0, #090b1f 65%);
+      border: 1px solid rgba(128, 143, 210, 0.5);
+      box-shadow: 0 0 24px rgba(9, 193, 255, 0.18);
+      min-width: 120px;
+    }
+
+    .candle {
+      position: relative;
+      width: 7px;
+      border-radius: 8px;
+      background: linear-gradient(
+        to top,
+        rgba(0, 224, 255, 0.2),
+        rgba(0, 224, 255, 0.9)
+      );
+    }
+
+    .candle.red {
+      background: linear-gradient(
+        to top,
+        rgba(255, 107, 61, 0.18),
+        rgba(255, 107, 61, 0.95)
+      );
+    }
+
+    .candle::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      top: -12px;
+      bottom: -8px;
+      border-radius: 999px;
+      background: linear-gradient(
+        to bottom,
+        rgba(222, 233, 255, 0.1),
+        rgba(222, 233, 255, 0.9),
+        rgba(222, 233, 255, 0.1)
+      );
+      opacity: 0.85;
+    }
+
+    .candle:nth-child(1) {
+      height: 24px;
+    }
+
+    .candle:nth-child(2) {
+      height: 34px;
+    }
+
+    .candle:nth-child(3) {
+      height: 18px;
+    }
+
+    .candle:nth-child(4) {
+      height: 29px;
+    }
+
+    .candle:nth-child(5) {
+      height: 22px;
+    }
+
+    .section-title {
+      margin: 12px 0 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 20px;
+      height: 1px;
+      border-radius: 999px;
+      background: linear-gradient(to left, var(--accent), transparent);
+    }
+
     label {
       display: block;
-      margin-top: 10px;
+      margin-top: 9px;
+      margin-bottom: 3px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 6px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 9px 11px;
+      border-radius: 11px;
+      border: 1px solid var(--border-soft);
+      background: rgba(6, 9, 26, 0.9);
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input::placeholder {
+      color: #596081;
+    }
+
+    select {
+      padding-right: 32px;
+    }
+
+    .select-arrow {
+      position: absolute;
+      top: 50%;
+      inset-inline-end: 11px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      font-size: 12px;
+      color: #8089b0;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 11px;
+      width: 100%;
+      border-radius: 999px;
+      border: none;
       font-weight: 600;
       font-size: 14px;
-    }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 4px;
-      box-sizing: border-box;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
-    button {
-      margin-top: 18px;
-      padding: 12px;
-      width: 100%;
       cursor: pointer;
-      font-weight: 700;
-      font-size: 15px;
-      border-radius: 8px;
-      border: none;
-      background: #0066cc;
-      color: #fff;
+      background: linear-gradient(135deg, #00e0ff, #ff6b3d);
+      color: #050714;
+      box-shadow:
+        0 10px 26px rgba(0, 224, 255, 0.25),
+        0 0 0 1px rgba(0, 0, 0, 0.3);
     }
+
     button:active {
-      opacity: 0.8;
+      transform: translateY(1px);
+      box-shadow:
+        0 3px 10px rgba(0, 224, 255, 0.25),
+        0 0 0 1px rgba(0, 0, 0, 0.3);
     }
+
     .result {
-      margin-top: 18px;
-      padding: 12px;
-      border-radius: 8px;
-      background: #f0f7ff;
-      font-size: 14px;
-      line-height: 1.6;
+      margin-top: 15px;
+      padding: 10px 11px;
+      border-radius: 14px;
+      background: radial-gradient(circle at top left, #18213f 0, #080b1d 55%);
+      border: 1px solid rgba(117, 132, 197, 0.65);
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-main);
     }
-    .error {
-      background: #ffe5e5;
-      color: #900;
+
+    .result b {
+      color: #fefefe;
     }
+
+    .result.error {
+      background: var(--error-bg);
+      border-color: rgba(255, 75, 92, 0.6);
+      color: var(--error-text);
+    }
+
     .note {
+      margin-top: 9px;
       font-size: 11px;
-      color: #666;
-      margin-top: 12px;
+      color: var(--text-muted);
       line-height: 1.6;
     }
-    .group-title {
-      margin-top: 20px;
-      font-weight: 700;
-      font-size: 14px;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 4px;
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      margin-bottom: 0;
+    }
+
+    .pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(120, 135, 210, 0.5);
+      font-size: 10px;
+      color: var(--text-muted);
+      background: rgba(7, 12, 34, 0.9);
+    }
+
+    @media (max-width: 420px) {
+      .card {
+        padding-inline: 14px;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .candles-strip {
+        align-self: stretch;
+        justify-content: center;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="background-fx">
+    <div class="bg-ring"></div>
+    <div class="bg-ring"></div>
+    <div class="bg-wave"></div>
+  </div>
 
-  <div class="app">
-    <h1>حاسبة اللوت</h1>
-    <h2>إدارة مخاطر لجميع الأدوات (فوركس، ين، ذهب، نفط، مؤشرات)</h2>
+  <div class="app-wrapper">
+    <div class="card">
+      <div class="header">
+        <div class="title-block">
+          <div class="badge">
+            <span class="badge-dot"></span>
+            LOT ENGINE v1.0
+          </div>
+          <h1>حاسبة اللوت</h1>
+          <p class="subtitle">
+            إدارة مخاطر لجميع الأدوات (فوركس، ين، ذهب، نفط، مؤشرات) مع مخرجات جاهزة للتنفيذ.
+          </p>
+        </div>
+        <div class="candles-strip" aria-hidden="true">
+          <div class="candle"></div>
+          <div class="candle red"></div>
+          <div class="candle"></div>
+          <div class="candle red"></div>
+          <div class="candle"></div>
+        </div>
+      </div>
 
-    <div class="group-title">مدخلات الحساب</div>
+      <div class="section-title">مدخلات الحساب</div>
 
-    <label>رصيد الحساب (عملة الحساب – مثال: USD):</label>
-    <input type="number" id="balance" placeholder="مثال: 10000">
+      <label>رصيد الحساب (عملة الحساب – مثال: USD):</label>
+      <div class="input-wrapper">
+        <input type="number" id="balance" placeholder="مثال: 10000" />
+      </div>
 
-    <label>نسبة المخاطرة % من الحساب:</label>
-    <input type="number" id="riskPercent" placeholder="مثال: 1">
+      <label>نسبة المخاطرة % من الحساب:</label>
+      <div class="input-wrapper">
+        <input type="number" id="riskPercent" placeholder="مثال: 1" />
+      </div>
 
-    <label>سعر الدخول (Entry Price):</label>
-    <input type="number" id="entryPrice" step="0.00001" placeholder="مثال: 1.08500 أو 2350.0 للذهب">
+      <label>سعر الدخول (Entry Price):</label>
+      <div class="input-wrapper">
+        <input
+          type="number"
+          id="entryPrice"
+          step="0.00001"
+          placeholder="مثال: 1.08500 أو 2350.0 للذهب"
+        />
+      </div>
 
-    <label>سعر وقف الخسارة (Stop Loss Price):</label>
-    <input type="number" id="slPrice" step="0.00001" placeholder="مثال: 1.08300">
+      <label>سعر وقف الخسارة (Stop Loss Price):</label>
+      <div class="input-wrapper">
+        <input
+          type="number"
+          id="slPrice"
+          step="0.00001"
+          placeholder="مثال: 1.08300"
+        />
+      </div>
 
-    <label>الرافعة المالية (Leverage):</label>
-    <input type="number" id="leverage" placeholder="مثال: 100 أو 500">
+      <label>الرافعة المالية (Leverage):</label>
+      <div class="input-wrapper">
+        <input type="number" id="leverage" placeholder="مثال: 100 أو 500" />
+      </div>
 
-    <label>نوع الأداة:</label>
-    <select id="instrumentType">
-      <option value="FOREX_4">فوركس 4 منازل (EURUSD, GBPUSD, ...)</option>
-      <option value="FOREX_JPY">أزواج الين (USDJPY, EURJPY, ...)</option>
-      <option value="GOLD">ذهب XAUUSD</option>
-      <option value="SILVER">فضة XAGUSD</option>
-      <option value="OIL">نفط (USOIL / UKOIL)</option>
-      <option value="INDEX">مؤشرات (US30, US500, NAS100, GER40, ...)</option>
-    </select>
+      <label>نوع الأداة:</label>
+      <div class="input-wrapper">
+        <select id="instrumentType">
+          <option value="FOREX_4">فوركس 4 منازل (EURUSD, GBPUSD, ...)</option>
+          <option value="FOREX_JPY">أزواج الين (USDJPY, EURJPY, ...)</option>
+          <option value="GOLD">ذهب XAUUSD</option>
+          <option value="SILVER">فضة XAGUSD</option>
+          <option value="OIL">نفط (USOIL / UKOIL)</option>
+          <option value="INDEX">مؤشرات (US30, US500, NAS100, GER40, ...)</option>
+        </select>
+        <span class="select-arrow">▼</span>
+      </div>
 
-    <button onclick="calculateLot()">احسب حجم اللوت</button>
+      <button onclick="calculateLot()">احسب حجم اللوت</button>
 
-    <div class="result" id="resultBox" style="display:none;"></div>
+      <div class="result" id="resultBox" style="display: none"></div>
 
-    <div class="note">
-      • الحسابات تقريبية وتعتمد على أن عملة الحساب = عملة التسعير (مثال حساب بالدولار وأدوات مسعّرة بالدولار).<br>
-      • ضروري يكون في فرق فعلي بين سعر الدخول ووقف الخسارة لحساب عدد النقاط وحجم اللوت.<br>
-      • راقب شروط حجم العقد لكل أداة حسب البروكر؛ بعض الوسطاء يستخدمون عقود مختلفة للمؤشرات أو النفط.
+      <div class="note">
+        • الحسابات تقريبية وتفترض أن عملة الحساب = عملة التسعير (مثال: حساب بالدولار وأدوات
+        مسعّرة بالدولار).<br />
+        • ضروري وجود فرق فعلي بين سعر الدخول ووقف الخسارة لحساب عدد النقاط وحجم اللوت.<br />
+        • تحقق من مواصفات العقود الفعلية لدى الوسيط (المؤشرات والسلع قد تختلف من بروكر لآخر).
+        <div class="pill-row">
+          <div class="pill">Risk-based sizing</div>
+          <div class="pill">Multi-asset</div>
+          <div class="pill">Lot • Pip • Margin</div>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
     function getInstrumentParams(type) {
-      // الإعدادات الافتراضية لكل مجموعة
       switch (type) {
-        case 'FOREX_4':
+        case "FOREX_4":
           return { contractSize: 100000, pipSize: 0.0001 };
-        case 'FOREX_JPY':
+        case "FOREX_JPY":
           return { contractSize: 100000, pipSize: 0.01 };
-        case 'GOLD':
-          // كثير من الوسطاء: 1 لوت = 100 أونصة، حركة 0.1 = نقطة
+        case "GOLD":
           return { contractSize: 100, pipSize: 0.1 };
-        case 'SILVER':
-          // مثال شائع: 1 لوت = 5000 أونصة، نقطة = 0.01
+        case "SILVER":
           return { contractSize: 5000, pipSize: 0.01 };
-        case 'OIL':
-          // نفط: 1 لوت = 1000 برميل، نقطة = 0.01
+        case "OIL":
           return { contractSize: 1000, pipSize: 0.01 };
-        case 'INDEX':
-          // مؤشرات: نفترض 1 عقد قياسي = 1 وحدة، نقطة = 1
+        case "INDEX":
           return { contractSize: 1, pipSize: 1 };
         default:
           return { contractSize: 100000, pipSize: 0.0001 };
@@ -163,20 +486,31 @@
     }
 
     function calculateLot() {
-      const balance = parseFloat(document.getElementById('balance').value);
-      const riskPercent = parseFloat(document.getElementById('riskPercent').value);
-      const entryPrice = parseFloat(document.getElementById('entryPrice').value);
-      const slPrice = parseFloat(document.getElementById('slPrice').value);
-      const leverage = parseFloat(document.getElementById('leverage').value);
-      const instrumentType = document.getElementById('instrumentType').value;
+      const balance = parseFloat(document.getElementById("balance").value);
+      const riskPercent = parseFloat(
+        document.getElementById("riskPercent").value
+      );
+      const entryPrice = parseFloat(
+        document.getElementById("entryPrice").value
+      );
+      const slPrice = parseFloat(document.getElementById("slPrice").value);
+      const leverage = parseFloat(document.getElementById("leverage").value);
+      const instrumentType =
+        document.getElementById("instrumentType").value;
 
-      const resultBox = document.getElementById('resultBox');
+      const resultBox = document.getElementById("resultBox");
 
-      if (isNaN(balance) || isNaN(riskPercent) || isNaN(entryPrice) ||
-          isNaN(slPrice) || isNaN(leverage)) {
-        resultBox.style.display = 'block';
-        resultBox.classList.add('error');
-        resultBox.innerHTML = "رجاءً تأكد من تعبئة جميع الحقول بشكل صحيح.";
+      if (
+        isNaN(balance) ||
+        isNaN(riskPercent) ||
+        isNaN(entryPrice) ||
+        isNaN(slPrice) ||
+        isNaN(leverage)
+      ) {
+        resultBox.style.display = "block";
+        resultBox.classList.add("error");
+        resultBox.innerHTML =
+          "رجاءً تأكد من تعبئة جميع الحقول الأساسية بشكل صحيح.";
         return;
       }
 
@@ -184,44 +518,42 @@
       const contractSize = params.contractSize;
       const pipSize = params.pipSize;
 
-      // عدد النقاط بين الدخول ووقف الخسارة
       const stopLossPips = Math.abs(entryPrice - slPrice) / pipSize;
 
       if (stopLossPips <= 0) {
-        resultBox.style.display = 'block';
-        resultBox.classList.add('error');
-        resultBox.innerHTML = "سعر الدخول ووقف الخسارة متساويان أو الفرق صفر. عدّل القيم.";
+        resultBox.style.display = "block";
+        resultBox.classList.add("error");
+        resultBox.innerHTML =
+          "سعر الدخول ووقف الخسارة متساويان أو الفرق صفر. عدّل القيم أولاً.";
         return;
       }
 
-      // قيمة النقطة لكل 1 لوت (تقريبية)
       const pipValuePerLot = contractSize * pipSize;
-
-      // المبلغ المعرض للخسارة
       const riskAmount = balance * (riskPercent / 100);
-
-      // حجم اللوت
       const lotSize = riskAmount / (stopLossPips * pipValuePerLot);
-
-      // قيمة النقطة حسب حجم اللوت
       const pipValueActual = pipValuePerLot * lotSize;
-
-      // القيمة الاسمية للمركز (Notional)
       const positionNotional = contractSize * lotSize * entryPrice;
-
-      // الهامش المطلوب
       const marginRequired = positionNotional / leverage;
 
-      resultBox.style.display = 'block';
-      resultBox.classList.remove('error');
+      resultBox.style.display = "block";
+      resultBox.classList.remove("error");
       resultBox.innerHTML =
-        "حجم اللوت المقترح: <b>" + formatNumber(lotSize, 3) + " لوت</b><br>" +
-        "عدد نقاط وقف الخسارة: <b>" + formatNumber(stopLossPips, 1) + " نقطة</b><br>" +
-        "المبلغ المعرض للخسارة: <b>" + formatNumber(riskAmount, 2) + "</b> من عملة الحساب<br>" +
-        "قيمة النقطة التقريبية: <b>" + formatNumber(pipValueActual, 2) + "</b> لكل نقطة<br>" +
-        "الهامش المطلوب تقريبياً: <b>" + formatNumber(marginRequired, 2) + "</b>";
+        "حجم اللوت المقترح: <b>" +
+        formatNumber(lotSize, 3) +
+        " لوت</b><br>" +
+        "عدد نقاط وقف الخسارة: <b>" +
+        formatNumber(stopLossPips, 1) +
+        " نقطة</b><br>" +
+        "المبلغ المعرض للخسارة: <b>" +
+        formatNumber(riskAmount, 2) +
+        "</b> من عملة الحساب<br>" +
+        "قيمة النقطة التقريبية: <b>" +
+        formatNumber(pipValueActual, 2) +
+        "</b> لكل نقطة<br>" +
+        "الهامش المطلوب تقريبياً: <b>" +
+        formatNumber(marginRequired, 2) +
+        "</b>";
     }
   </script>
-
 </body>
 </html>
