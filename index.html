@@ -166,6 +166,52 @@
       opacity: 0.7;
     }
 
+    /* شعار شموع داخل اللوقو */
+    .logo-chart {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 3px;
+      width: 26px;
+      height: 22px;
+    }
+
+    .logo-candle {
+      position: relative;
+      width: 5px;
+      border-radius: 999px;
+      background: linear-gradient(
+        to top,
+        rgba(0, 224, 255, 0.2),
+        rgba(0, 224, 255, 0.95)
+      );
+    }
+
+    .logo-candle::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1.5px;
+      top: -7px;
+      bottom: -4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      opacity: 0.85;
+    }
+
+    .logo-candle.down {
+      background: linear-gradient(
+        to top,
+        rgba(255, 107, 61, 0.2),
+        rgba(255, 107, 61, 0.95)
+      );
+    }
+
+    .logo-candle:nth-child(1) { height: 13px; }
+    .logo-candle:nth-child(2) { height: 18px; }
+    .logo-candle:nth-child(3) { height: 10px; }
+
     .logo-text-main {
       font-weight: 800;
       letter-spacing: 0.02em;
@@ -181,13 +227,6 @@
 
     body.light .logo-text-sub {
       color: var(--text-muted-light);
-    }
-
-    .logo-letter {
-      font-weight: 900;
-      font-size: 22px;
-      color: #ffffff;
-      text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
     }
 
     .theme-toggle {
@@ -278,67 +317,6 @@
     body.light .subtitle {
       color: var(--text-muted-light);
     }
-
-    .candles-strip {
-      display: flex;
-      align-items: flex-end;
-      gap: 4px;
-      padding: 6px 10px 4px;
-      border-radius: 14px;
-      background: radial-gradient(circle at top, #202547 0, #090b1f 60%);
-      border: 1px solid rgba(128, 143, 210, 0.6);
-      box-shadow: 0 0 24px rgba(9, 193, 255, 0.18);
-      min-width: 120px;
-    }
-
-    body.light .candles-strip {
-      background: radial-gradient(circle at top, #e4e7ff 0, #cdd3ff 60%);
-      border-color: #b8c1f3;
-      box-shadow: 0 0 18px rgba(104, 120, 209, 0.35);
-    }
-
-    .candle {
-      position: relative;
-      width: 7px;
-      border-radius: 8px;
-      background: linear-gradient(
-        to top,
-        rgba(0, 224, 255, 0.2),
-        rgba(0, 224, 255, 0.9)
-      );
-    }
-
-    .candle.red {
-      background: linear-gradient(
-        to top,
-        rgba(255, 107, 61, 0.18),
-        rgba(255, 107, 61, 0.96)
-      );
-    }
-
-    .candle::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 2px;
-      top: -12px;
-      bottom: -8px;
-      border-radius: 999px;
-      background: linear-gradient(
-        to bottom,
-        rgba(222, 233, 255, 0.1),
-        rgba(222, 233, 255, 0.9),
-        rgba(222, 233, 255, 0.1)
-      );
-      opacity: 0.85;
-    }
-
-    .candle:nth-child(1) { height: 24px; }
-    .candle:nth-child(2) { height: 34px; }
-    .candle:nth-child(3) { height: 18px; }
-    .candle:nth-child(4) { height: 29px; }
-    .candle:nth-child(5) { height: 22px; }
 
     .section-title {
       margin: 10px 0 6px;
@@ -599,9 +577,6 @@
         align-items: stretch;
         gap: 10px;
       }
-      .candles-strip {
-        align-self: flex-end;
-      }
     }
   </style>
 </head>
@@ -618,7 +593,11 @@
         <div>
           <div class="logo-block">
             <div class="logo-mark">
-              <span class="logo-letter">B</span>
+              <div class="logo-chart" aria-hidden="true">
+                <span class="logo-candle up"></span>
+                <span class="logo-candle down"></span>
+                <span class="logo-candle up"></span>
+              </div>
             </div>
             <div>
               <div class="logo-text-main">Busultan Trading</div>
@@ -1026,7 +1005,7 @@
         riskPercent
       };
 
-      renderTrades(); // تحديث الجدول لو تم الحفظ سابقًا
+      renderTrades();
     }
 
     function saveTrade() {
@@ -1049,7 +1028,7 @@
         trades = [];
       }
 
-      trades.unshift(lastResult); // آخر صفقة في الأعلى
+      trades.unshift(lastResult);
       if (trades.length > 50) trades.pop();
 
       localStorage.setItem("busultan_trades", JSON.stringify(trades));
