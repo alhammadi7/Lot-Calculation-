@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>حاسبة اللوت المتقدمة</title>
+  <title>Busultan – حاسبة اللوت المتقدمة</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * {
@@ -15,7 +15,7 @@
 
     body {
       min-height: 100vh;
-      background: radial-gradient(circle at top left, #1b2038, #050611 60%);
+      background: radial-gradient(circle at top left, #1c2138, #040510 55%, #030308);
       color: #f5f7ff;
       display: flex;
       justify-content: center;
@@ -25,12 +25,13 @@
 
     .card {
       width: 100%;
-      max-width: 900px;
-      background: linear-gradient(135deg, #111522, #060712);
-      border-radius: 18px;
-      padding: 24px 22px 26px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      max-width: 920px;
+      background: radial-gradient(circle at top right, #181c31, #050610 55%);
+      border-radius: 22px;
+      padding: 24px 24px 26px;
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(10px);
     }
 
     .card-header {
@@ -40,10 +41,65 @@
       margin-bottom: 18px;
     }
 
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* لوجو شموع يابانية */
+    .logo-candles {
+      width: 46px;
+      height: 46px;
+      border-radius: 18px;
+      background: radial-gradient(circle at top, #283356, #0c0f21);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.7);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-candle {
+      position: absolute;
+      bottom: 9px;
+      width: 7px;
+      border-radius: 999px;
+    }
+
+    .logo-candle::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: -7px;
+      bottom: -7px;
+      width: 2px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .logo-candle:nth-child(1) {
+      left: 9px;
+      height: 18px;
+      background: #3f8cff;
+    }
+
+    .logo-candle:nth-child(2) {
+      left: 19px;
+      height: 26px;
+      background: #ff5c7a;
+    }
+
+    .logo-candle:nth-child(3) {
+      left: 29px;
+      height: 15px;
+      background: #43d39b;
+    }
+
     .brand {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
     }
 
     .brand-title {
@@ -54,7 +110,7 @@
 
     .brand-sub {
       font-size: 11px;
-      opacity: 0.75;
+      opacity: 0.78;
     }
 
     .badge {
@@ -62,7 +118,7 @@
       padding: 3px 8px;
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.06);
-      margin-left: 6px;
+      margin-right: 4px;
     }
 
     .lang-toggle {
@@ -70,6 +126,7 @@
       align-items: center;
       gap: 6px;
       font-size: 11px;
+      opacity: 0.85;
     }
 
     .dot {
@@ -77,11 +134,11 @@
       height: 10px;
       border-radius: 50%;
       background: #ffb341;
-      box-shadow: 0 0 8px rgba(255, 179, 65, 0.8);
+      box-shadow: 0 0 10px rgba(255, 179, 65, 0.9);
     }
 
     h2 {
-      font-size: 17px;
+      font-size: 18px;
       margin-bottom: 6px;
       text-align: center;
     }
@@ -89,7 +146,7 @@
     .subtitle {
       font-size: 11px;
       text-align: center;
-      opacity: 0.8;
+      opacity: 0.82;
       margin-bottom: 18px;
     }
 
@@ -113,7 +170,7 @@
     }
 
     label {
-      opacity: 0.9;
+      opacity: 0.96;
     }
 
     .example {
@@ -124,26 +181,27 @@
     input,
     select {
       width: 100%;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 11px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
       background: rgba(5, 6, 16, 0.9);
       color: #f5f7ff;
-      padding: 8px 10px;
+      padding: 8px 11px;
       font-size: 13px;
       outline: none;
       transition: border 0.18s ease, box-shadow 0.18s ease,
-        background 0.18s ease;
+        background 0.18s ease, transform 0.08s ease;
     }
 
     input::placeholder {
-      color: rgba(255, 255, 255, 0.35);
+      color: rgba(255, 255, 255, 0.33);
     }
 
     input:focus,
     select:focus {
       border-color: #3f8cff;
-      box-shadow: 0 0 0 1px rgba(63, 140, 255, 0.5);
-      background: rgba(5, 9, 30, 0.95);
+      box-shadow: 0 0 0 1px rgba(63, 140, 255, 0.55);
+      background: rgba(6, 10, 30, 0.96);
+      transform: translateY(-0.5px);
     }
 
     select {
@@ -180,21 +238,21 @@
     .btn-primary {
       background: linear-gradient(135deg, #3f8cff, #945bff);
       color: #ffffff;
-      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.85);
     }
 
     .btn-primary:hover {
       transform: translateY(-1px);
-      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.95);
     }
 
     .btn-ghost {
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.04);
       color: #d3d7ff;
     }
 
     .btn-ghost:hover {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.08);
       transform: translateY(-1px);
     }
 
@@ -222,14 +280,14 @@
 
     .result-box {
       background: radial-gradient(circle at top left, #181c33, #070818);
-      border-radius: 12px;
+      border-radius: 13px;
       padding: 10px 12px;
       border: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .result-label {
       font-size: 11px;
-      opacity: 0.65;
+      opacity: 0.66;
       margin-bottom: 3px;
     }
 
@@ -255,13 +313,21 @@
 <body>
   <div class="card">
     <div class="card-header">
-      <div class="brand">
-        <div class="brand-title">Busultan Trading</div>
-        <div class="brand-sub">
-          إدارة مخاطر احترافية
-          <span class="badge">MULTI-ASSET • FUNDING • R:R</span>
+      <div class="brand-wrap">
+        <div class="logo-candles">
+          <div class="logo-candle"></div>
+          <div class="logo-candle"></div>
+          <div class="logo-candle"></div>
+        </div>
+        <div class="brand">
+          <div class="brand-title">Busultan Trading</div>
+          <div class="brand-sub">
+            إدارة مخاطر احترافية
+            <span class="badge">MULTI-ASSET • FUNDING • R:R</span>
+          </div>
         </div>
       </div>
+
       <div class="lang-toggle">
         AR
         <span class="dot"></span>
@@ -270,7 +336,7 @@
 
     <h2>حاسبة اللوت المتقدمة</h2>
     <div class="subtitle">
-      حساب حجم العقد، نسبة المخاطرة، والهامش المطلوب بناءً على بيانات الصفقة.
+      حساب حجم العقد، نسبة المخاطرة، والهامش المطلوب بناءً على إعدادات الصفقة.
     </div>
 
     <form id="lotForm">
@@ -288,7 +354,7 @@
 
       <div class="field">
         <label for="entry">سعر الدخول (Entry)</label>
-        <span class="example">مثال EURUSD: 1.08500 أو ذهب XAUUSD: 2350.0</span>
+        <span class="example">مثال EURUSD: 1.08500 أو USDJPY: 156.30</span>
         <input id="entry" type="number" step="0.00001" placeholder="1.08500" required />
       </div>
 
@@ -298,9 +364,39 @@
         <input id="sl" type="number" step="0.00001" placeholder="1.08300" required />
       </div>
 
+      <div class="field full-row">
+        <label for="symbol">زوج / أداة التداول</label>
+        <span class="example">
+          أزواج رئيسية + أزواج الين الياباني + ذهب ومؤشرات
+        </span>
+        <select id="symbol">
+          <!-- أزواج رئيسية -->
+          <option value="EURUSD" data-group="major">EURUSD (فوركس رئيسي)</option>
+          <option value="GBPUSD" data-group="major">GBPUSD (فوركس رئيسي)</option>
+          <option value="AUDUSD" data-group="major">AUDUSD</option>
+          <option value="NZDUSD" data-group="major">NZDUSD</option>
+          <option value="USDCHF" data-group="major">USDCHF</option>
+          <option value="USDCAD" data-group="major">USDCAD</option>
+
+          <!-- أزواج الين الياباني -->
+          <option value="USDJPY" data-group="jpy">USDJPY (زوج ين)</option>
+          <option value="EURJPY" data-group="jpy">EURJPY (زوج ين)</option>
+          <option value="GBPJPY" data-group="jpy">GBPJPY (زوج ين)</option>
+          <option value="AUDJPY" data-group="jpy">AUDJPY (زوج ين)</option>
+          <option value="NZDJPY" data-group="jpy">NZDJPY (زوج ين)</option>
+          <option value="CHFJPY" data-group="jpy">CHFJPY (زوج ين)</option>
+          <option value="CADJPY" data-group="jpy">CADJPY (زوج ين)</option>
+
+          <!-- ذهب ومؤشرات -->
+          <option value="XAUUSD" data-group="gold">XAUUSD (ذهب)</option>
+          <option value="US30" data-group="indices">US30 (داو جونز)</option>
+          <option value="NAS100" data-group="indices">NAS100 (ناسداك)</option>
+        </select>
+      </div>
+
       <div class="field">
         <label for="tp1">هدف 1 (TP1) – اختياري</label>
-        <span class="example">فقط لأجل المتابعة، لا يؤثر في الحساب</span>
+        <span class="example">للمتابعة فقط، لا يؤثر على الحساب</span>
         <input id="tp1" type="number" step="0.00001" placeholder="—" />
       </div>
 
@@ -318,15 +414,6 @@
         <label for="leverage">الرافعة المالية (Leverage)</label>
         <span class="example">مثال: 100 أو 500</span>
         <input id="leverage" type="number" step="1" placeholder="500" value="500" />
-      </div>
-
-      <div class="field full-row">
-        <label for="instrument">نوع الأداة</label>
-        <select id="instrument">
-          <option value="forex">أزواج فوركس رئيسية (EURUSD, GBPUSD ...)</option>
-          <option value="gold">ذهب XAUUSD</option>
-          <option value="indices">مؤشرات (US30, NAS100 ...)</option>
-        </select>
       </div>
 
       <div class="full-row btn-row">
@@ -361,7 +448,7 @@
       <div class="result-box">
         <div class="result-label">الهامش المطلوب تقريبا</div>
         <div class="result-value" id="marginRequired">0.00</div>
-        <div class="result-hint">بالدولار، باستخدام الرافعة المحددة</div>
+        <div class="result-hint">بالدولار باستخدام الرافعة المحددة</div>
       </div>
 
       <div class="result-box">
@@ -371,28 +458,32 @@
       </div>
 
       <div class="warning">
-        ملاحظة: هذه أرقام تقريبية تعليمية. قد تختلف القيم الفعلية حسب وسيط التداول،
-        نوع الحساب، وفروق الأسعار.
+        ملاحظة: الأرقام تقريبية تعليمية. التنفيذ الفعلي يختلف حسب الوسيط، نوع الحساب، السبريد والعمولات.
       </div>
     </div>
   </div>
 
   <script>
-    // إعدادات تقريبية لكل نوع أداة
-    const instrumentConfig = {
-      forex: {
-        pipSize: 0.0001, // فرق النقطة
-        pipValuePerLot: 10, // قيمة النقطة لوت قياسي (تقريبًا 10$)
+    // إعدادات حسب مجموعة الأداة
+    const groupConfig = {
+      major: {
+        pipSize: 0.0001,
+        pipValuePerLot: 10,    // تقريبًا 10$ للنقطة
+        contractSize: 100000
+      },
+      jpy: {
+        pipSize: 0.01,         // أزواج الين النقطة الثانية
+        pipValuePerLot: 9.5,   // تقريبي
         contractSize: 100000
       },
       gold: {
-        pipSize: 0.1, // حركة 0.1
-        pipValuePerLot: 10, // تقريبًا 10$ لكل 0.1
+        pipSize: 0.1,          // حركة 0.1 في الذهب
+        pipValuePerLot: 10,
         contractSize: 100
       },
       indices: {
-        pipSize: 1, // نقطة واحدة في المؤشر
-        pipValuePerLot: 1, // 1$ لكل نقطة – افتراض
+        pipSize: 1,            // نقطة واحدة في المؤشر
+        pipValuePerLot: 1,     // 1$ لكل نقطة – افتراض
         contractSize: 1
       }
     };
@@ -408,7 +499,8 @@
       const entry = parseFloat(document.getElementById("entry").value);
       const sl = parseFloat(document.getElementById("sl").value);
       const leverage = parseFloat(document.getElementById("leverage").value || 1);
-      const instrumentKey = document.getElementById("instrument").value;
+      const symbolSelect = document.getElementById("symbol");
+      const groupKey = symbolSelect.options[symbolSelect.selectedIndex].dataset.group || "major";
 
       if (
         !isFinite(balance) ||
@@ -422,34 +514,28 @@
         return;
       }
 
-      const config = instrumentConfig[instrumentKey];
+      const config = groupConfig[groupKey];
+
       const pipDistanceRaw = Math.abs(entry - sl);
       const pipDistance = pipDistanceRaw / config.pipSize;
 
       if (!isFinite(pipDistance) || pipDistance === 0) {
-        alert("مسافة الوقف صفر تقريبًا، رجاءً عدّل سعر الدخول أو وقف الخسارة.");
+        alert("مسافة الوقف صفر تقريبًا، عدّل سعر الدخول أو وقف الخسارة.");
         return;
       }
 
       const riskAmount = balance * (riskPercent / 100);
       const lotSize = riskAmount / (pipDistance * config.pipValuePerLot);
 
-      // حجم العقد الاسمي
       const notional = lotSize * config.contractSize;
-
-      // الهامش المطلوب (تقريبي)
       const marginRequired = leverage > 0 ? notional / leverage : 0;
 
-      // عرض النتائج
       document.getElementById("lotSize").textContent = lotSize.toFixed(2);
       document.getElementById("riskAmount").textContent = riskAmount.toFixed(2);
-      document.getElementById("pipDistance").textContent =
-        pipDistance.toFixed(1);
-      document.getElementById("marginRequired").textContent =
-        marginRequired.toFixed(2);
-      document.getElementById("notional").textContent = Math.round(notional).toLocaleString(
-        "en-US"
-      );
+      document.getElementById("pipDistance").textContent = pipDistance.toFixed(1);
+      document.getElementById("marginRequired").textContent = marginRequired.toFixed(2);
+      document.getElementById("notional").textContent =
+        Math.round(notional).toLocaleString("en-US");
 
       resultsBox.style.display = "grid";
     });
